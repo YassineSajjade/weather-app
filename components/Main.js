@@ -13,15 +13,25 @@ function Main(props) {
 
     const getWeatherForecast = () => {
         // fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879dd')
-        fetch('https://api.weatherapi.com/v1/forecast.json?key=ad4b8f61a78d45a598293412210308&q=casablanca&days=5&aqi=no&alerts=yes')
+        // fetch('https://api.weatherapi.com/v1/forecast.json?key=ad4b8f61a78d45a598293412210308&q=casablanca&days=5&aqi=no&alerts=yes')
+        //   .then((response) => response.json())
+        //   .then((responseJson) => {
+        //     seatWeatherForecastData(responseJson);
+        //     //console.log(responseJson);
+        //     getForecastDays(days[new Date().getDay()]);
+        //   })
+        //   .catch((error) => {
+        //     console.error('Forecast ERROR: ' + error);
+        //   });
+
+        fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879&units=metric')
           .then((response) => response.json())
           .then((responseJson) => {
             seatWeatherForecastData(responseJson);
-            //console.log(responseJson);
-            getForecastDays(days[new Date().getDay()]);
+            console.log(responseJson);
           })
           .catch((error) => {
-            console.error('Forecast ERROR: ' + error);
+            console.log('openweathermap ERROR: ' + error);
           });
       }
     
@@ -90,6 +100,7 @@ function Main(props) {
     
       useEffect(() => {
         getWeatherForecast();
+        
       }, weatherForecastData);
     
     
@@ -121,11 +132,11 @@ function Main(props) {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {weatherForecastData != null
+            {weatherForecastData !== null
                 ?
                 <>
                     <View style={styles.header} >
-                        <Text style={styles.city}>{weatherForecastData.location.name}</Text>
+                        <Text style={styles.city}></Text>
                         <TouchableWithoutFeedback onPress={props.toggle}>
                           <Image style={{ width: '40px', height: '40px', marginLeft: '70px'}} source={ require('../assets/icons8-search-50.png')} />
                         </TouchableWithoutFeedback>
@@ -133,17 +144,17 @@ function Main(props) {
 
                     <View style={styles.containerIcon}>
                         {/* <Image style={styles.icon} source={  require('./assets/weather-icons/sun-240.png') } /> */}
-                        <Image style={styles.icon} source={{ uri: 'https:' + weatherForecastData.current.condition.icon }} />
+                        <Image style={styles.icon} source={{ uri: 'https://openweathermap.org/img/wn/'+weatherForecastData.list[0].weather[0].icon+'@4x.png'}} />
                     </View>
 
-                    <View style={styles.description}>
-                        <Text style={styles.descText}>{weatherForecastData.current.condition.text}</Text>
+                     <View style={styles.description}>
+                        <Text style={styles.descText}>{weatherForecastData.list[0].weather[0].description}</Text>
                     </View>
 
                     <View style={styles.temperature}>
                         <Text style={styles.temp}>{weatherForecastData.current.temp_c}°</Text>
                     </View>
-
+                  {/*
                     <View style={styles.statistics}>
                         <View style={styles.statisticsChilds}>
                             <Image style={styles.statisticsIcons} source={require('../assets/weather-icons/icons8-wet-100.png')} />
@@ -171,7 +182,7 @@ function Main(props) {
                             keyExtractor={(item) => item.id.toString()}
                             contentContainerStyle={{ alignItems: 'center' }}
                             horizontal />
-                    </View>
+                    </View> */}
                 </>
                 : <View><Text>NOTHING</Text></View>}
 

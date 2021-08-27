@@ -22,7 +22,7 @@ function SearcheCity(props) {
             
             const citiesArray = Object.values(responseJson);
             const arr = [];
-             for(let i=0; i<5; i++){
+             for(let i=0; i<citiesArray.length; i++){
                  for(let j=0; j<citiesArray[i].length; j++){
                     //console.log(citiesArray[i][j]);
                     arr.push(citiesArray[i][j]);
@@ -141,10 +141,10 @@ function SearcheCity(props) {
                     <View style={{ width: '300px' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ fontWeight: 'bold', fontSize: '70px', marginRight: 50, color: '#202c58' }}>{ dataOfCity.current.temp_c }°</Text>
-                            <Image style={{ width: '70px', height: '70px', marginLeft: 50 }} source={{ uri: 'https:'+dataOfCity.forecast.forecastday[0].day.condition.icon }} />
+                            <Image style={{ width: '70px', height: '70px', marginLeft: 50 }} source={{ uri: 'https:'+dataOfCity.current.condition.icon }} />
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Text style={{ marginRight: '0px', fontWeight: 'bold', color: '#202c58' }}> { dataOfCity.forecast.forecastday[0].day.condition.text } </Text>
+                            <Text style={{ marginRight: '0px', fontWeight: 'bold', color: '#202c58' }}> { dataOfCity.current.condition.text } </Text>
                             <Text style={{ marginRight: '20px', fontWeight: 'bold', color: '#202c58bf' }}> {dataOfCity.forecast.forecastday[0].day.maxtemp_c}° / {dataOfCity.forecast.forecastday[0].day.mintemp_c}°</Text>
                             <Text style={{ marginLeft: '0px', fontWeight: 'bold', color: '#202c58bf' }}> Feels like {dataOfCity.current.feelslike_c}°</Text>
                         </View>
@@ -154,31 +154,31 @@ function SearcheCity(props) {
                         <View style={{ marginRight: '23px' }}>
                             <View style={{ flexDirection: 'row', marginBottom: '20px' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.forecast.forecastday[0].astro.sunrise} </Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-wet-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.current.humidity} %</Text>
                             </View>
                         </View>
                         <View style={{ marginRight: '23px' }}>
                             <View style={{ flexDirection: 'row', marginBottom: '20px' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.forecast.forecastday[0].astro.sunset} </Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/ultraviolet.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.current.uv} UV </Text>
                             </View>
                         </View>
                         <View>
                             <View style={{ flexDirection: 'row', marginBottom: '20px' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-wind-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.current.wind_kph} Km/h </Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
                                 <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-pressure.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>07:00 am</Text>
+                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.current.pressure_mb} mb </Text>
                             </View>
                         </View>
                     </View>
