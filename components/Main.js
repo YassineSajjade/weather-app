@@ -9,9 +9,9 @@ function Main(props) {
 
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  
+    
 
-    const getWeatherForecast = () => {
+    const getWeatherForecast = (dayClicked) => {
         // fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879dd')
         // fetch('https://api.weatherapi.com/v1/forecast.json?key=ad4b8f61a78d45a598293412210308&q=casablanca&days=5&aqi=no&alerts=yes')
         //   .then((response) => response.json())
@@ -24,88 +24,148 @@ function Main(props) {
         //     console.error('Forecast ERROR: ' + error);
         //   });
 
-        fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879&units=metric')
+        fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879dd&units=metric')
           .then((response) => response.json())
           .then((responseJson) => {
             seatWeatherForecastData(responseJson);
             console.log(responseJson);
+            getForecastDays(responseJson, dayClicked);
+            //console.log(dayClicked);
+            
+
+
+
           })
           .catch((error) => {
             console.log('openweathermap ERROR: ' + error);
           });
       }
-    
-      const getForecastDays = (day) => {
+
+      // ****** get ForeCast Days ******
+      const getForecastDays = (responseJson, dayClicked) => {
         let newArrayDays = []; 
         let newArrayHours = [];
-        let flatListArray = [];
-    
-        for (let i = 0; i < weatherForecastData.forecast.forecastday.length; i++) {
-    
-          //Forecast Days
-          let str = parseInt(weatherForecastData.forecast.forecastday[i].date_epoch + '000');
-          let Day = days[new Date(str).getDay()];
-          let Month = months[new Date(str).getMonth()];
-          let fDate = new Date(str).getDate();
-          //let objDay = { "id": i, "day": Day+','+fDate+' '+Month};
-          let objDay = { "id": i, "day": Day, "date": fDate+' '+Month};
-    
-          newArrayDays.push(objDay);
-          seatForecastDays(newArrayDays);
-    
-    
-          //Forecast Hours
-          for (let j = 0; j < weatherForecastData.forecast.forecastday[i].hour.length; j++) {
-    
-            let day = days[new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getDay()];
-            //let hour = weatherForecastData.forecast.forecastday[i].hour[j].time.slice(11, 17);
-            let hour = new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getHours();
-            let icon = weatherForecastData.forecast.forecastday[i].hour[j].condition.icon;
-            let temp = weatherForecastData.forecast.forecastday[i].hour[j].temp_c;
-            
-            let objHours = {};
-            //Check what a Day is !!!
-            if(day == days[new Date().getDay()]){ //==> If the day == Today
-              if(hour >= new Date().getHours()){  //==> If hour of the day >= the hour of Today
-                if(hour.toString().length > 1){
-                  objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
-                 }else{
-                   objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
-                 }
-              }
-            }else{
-              if(hour.toString().length > 1){
-                objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
-               }else{
-                 objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
-               }
+
+        let dtStrToInt,day,month,fDate,hour,icon,temp ;
+        
+        for (let i = 0; i < responseJson.list.length; i++) {
+
+          dtStrToInt = parseInt(responseJson.list[i].dt + '000');
+          day = days[new Date(dtStrToInt).getDay()];
+          month = months[new Date(dtStrToInt).getMonth()];
+          fDate = new Date(dtStrToInt).getDate();
+
+          hour = responseJson.list[i].dt_txt.slice(11, 16);
+          icon = responseJson.list[i].weather[0].icon;
+          temp = responseJson.list[i].main.temp;
+          
+          let objDay = { "id": i, "day": day, "date": fDate+' '+month};
+          let objHour = {};
+
+          // ****** FlatList of Hours ******
+          //Check what a Day is !!!
+          if(!dayClicked){
+             if(day === days[new Date().getDay()]){ //==> If the day == Today
+                objHour = { 'id': i, 'day': day, 'hour': hour, 'icon': icon, 'temp': temp }
+                newArrayHours.push(objHour);
             }
-            newArrayHours.push(objHours);
+          }else if(day === dayClicked){
+            objHour = { 'id': i, 'day': day, 'hour': hour, 'icon': icon, 'temp': temp }
+            newArrayHours.push(objHour);
           }
-    
+         
+            
+
+            
+
+          // ****** FlatList of Days ******
+          if (newArrayDays.length === 0) {
+            newArrayDays.push(objDay);
+          }else{
+            if(!newArrayDays.some(item => item.day === day)){
+                newArrayDays.push(objDay)
+            }
+          }
+          
         }
-    
-        // Fetch in 
-          newArrayHours.forEach(element => {
-              if (element.day == day) {
-                flatListArray.push(element);
-              }
-            });
-          seatForecastHours(flatListArray);
-        
-    
-        
+        seatForecastDays(newArrayDays);
+        seatForecastHours(newArrayHours);
+        console.log(newArrayHours);
       }
+    
+      // const getForecastDays = (day) => {
+      //   let newArrayDays = []; 
+      //   let newArrayHours = [];
+      //   let flatListArray = [];
+
+
+    
+        // for (let i = 0; i < weatherForecastData.forecast.forecastday.length; i++) {
+    
+        //   //Forecast Days
+        //   let str = parseInt(weatherForecastData.forecast.forecastday[i].date_epoch + '000');
+        //   let Day = days[new Date(str).getDay()];
+        //   let Month = months[new Date(str).getMonth()];
+        //   let fDate = new Date(str).getDate();
+        //   //let objDay = { "id": i, "day": Day+','+fDate+' '+Month};
+        //   let objDay = { "id": i, "day": Day, "date": fDate+' '+Month};
+    
+        //   newArrayDays.push(objDay);
+        //   seatForecastDays(newArrayDays);
+    
+    
+        //   //Forecast Hours
+        //   for (let j = 0; j < weatherForecastData.forecast.forecastday[i].hour.length; j++) {
+    
+        //     let day = days[new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getDay()];
+        //     //let hour = weatherForecastData.forecast.forecastday[i].hour[j].time.slice(11, 17);
+        //     let hour = new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getHours();
+        //     let icon = weatherForecastData.forecast.forecastday[i].hour[j].condition.icon;
+        //     let temp = weatherForecastData.forecast.forecastday[i].hour[j].temp_c;
+            
+        //     let objHours = {};
+        //     //Check what a Day is !!!
+        //     if(day == days[new Date().getDay()]){ //==> If the day == Today
+        //       if(hour >= new Date().getHours()){  //==> If hour of the day >= the hour of Today
+        //         if(hour.toString().length > 1){
+        //           objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
+        //          }else{
+        //            objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
+        //          }
+        //       }
+        //     }else{
+        //       if(hour.toString().length > 1){
+        //         objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
+        //        }else{
+        //          objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
+        //        }
+        //     }
+        //     newArrayHours.push(objHours);
+        //   }
+    
+        // }
+    
+        // // Fetch in 
+        //   newArrayHours.forEach(element => {
+        //       if (element.day == day) {
+        //         flatListArray.push(element);
+        //       }
+        //     });
+        //   seatForecastHours(flatListArray);
+        
+    
+        
+      //}
     
     
       useEffect(() => {
         getWeatherForecast();
         
-      }, weatherForecastData);
+      }, []);
     
     
       const ItemDay = ({ day, date }) => (
-        <TouchableWithoutFeedback onPress={() => getForecastDays(day) }>
+        <TouchableWithoutFeedback onPress={() => getWeatherForecast(day) }>
           <View style={styles.containerDay}>
             <Text style={styles.day}>{day}, {date}</Text>
           </View>
@@ -119,8 +179,8 @@ function Main(props) {
       const ItemForcast = ({ hour, icon, temp }) => (
         <View style={styles.containerForcast}>
           <Text style={styles.forcastHour} >{hour}</Text>
-          <Image style={styles.forcastIcon} source={{ uri: 'https:'+icon }} />
-          <Text style={styles.forcastTemp} >{temp}°</Text>
+          <Image style={styles.forcastIcon} source={{ uri: 'https://openweathermap.org/img/wn/'+icon+'@2x.png' }} />
+          <Text style={styles.forcastTemp} >{temp.toFixed(0)}°</Text>
         </View>
       );
     
@@ -132,59 +192,59 @@ function Main(props) {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {weatherForecastData !== null
-                ?
-                <>
-                    <View style={styles.header} >
-                        <Text style={styles.city}></Text>
-                        <TouchableWithoutFeedback onPress={props.toggle}>
-                          <Image style={{ width: '40px', height: '40px', marginLeft: '70px'}} source={ require('../assets/icons8-search-50.png')} />
-                        </TouchableWithoutFeedback>
-                    </View>
+            { weatherForecastData 
+              ? 
+              <>
+                <View style={styles.header} >
+                    <Text style={styles.city}>{weatherForecastData.city.name},{weatherForecastData.city.country}</Text>
+                    <TouchableWithoutFeedback onPress={props.toggle}>
+                      <Image style={{ width: '40px', height: '40px'}} source={ require('../assets/icons8-search-50.png')} />
+                    </TouchableWithoutFeedback>
+                </View>
+ 
+                <View style={styles.containerIcon}>
+                    <Image style={styles.icon} source={{ uri: 'https://openweathermap.org/img/wn/'+weatherForecastData.list[0].weather[0].icon+'@4x.png'}} />
+                </View>
 
-                    <View style={styles.containerIcon}>
-                        {/* <Image style={styles.icon} source={  require('./assets/weather-icons/sun-240.png') } /> */}
-                        <Image style={styles.icon} source={{ uri: 'https://openweathermap.org/img/wn/'+weatherForecastData.list[0].weather[0].icon+'@4x.png'}} />
-                    </View>
+                <View style={styles.description}>
+                   <Text style={styles.descText}>{weatherForecastData.list[0].weather[0].description}</Text>
+                </View>
 
-                     <View style={styles.description}>
-                        <Text style={styles.descText}>{weatherForecastData.list[0].weather[0].description}</Text>
+                <View style={styles.temperature}>
+                    <Text style={styles.temp}>{weatherForecastData.list[0].main.temp.toFixed(0)}°</Text>
+                </View>
+           
+                <View style={styles.statistics}>
+                    <View style={styles.statisticsChilds1}>
+                        <Image style={styles.statisticsIcons} source={require('../assets/weather-icons/icons8-wet-100.png')} />
+                        <Text style={styles.statisticsText}>{weatherForecastData.list[0].main.humidity} %</Text>
                     </View>
+                    <View style={styles.statisticsChilds2}>
+                        <Image style={styles.statisticsIcons} source={require('../assets/weather-icons/icons8-wind-100.png')} />
+                        <Text style={styles.statisticsText}> {(weatherForecastData.list[0].wind.speed * 3.6).toFixed(0)} Km/h </Text>
+                    </View>
+                </View>
+                
+                <View style={styles.viewDays}>
+                    <FlatList
+                        data={forecastDays}
+                        renderItem={renderItemDay}
+                        keyExtractor={(item) => item.id.toString()}
+                        //contentContainerStyle={{ alignItems: 'center' }}
+                        horizontal />
+                </View>
 
-                    <View style={styles.temperature}>
-                        <Text style={styles.temp}>{weatherForecastData.current.temp_c}°</Text>
-                    </View>
-                  {/*
-                    <View style={styles.statistics}>
-                        <View style={styles.statisticsChilds}>
-                            <Image style={styles.statisticsIcons} source={require('../assets/weather-icons/icons8-wet-100.png')} />
-                            <Text style={styles.statisticsText}>{weatherForecastData.current.humidity} %</Text>
-                        </View>
-                        <View style={styles.statisticsChilds, styles.statisticsChilds2}>
-                            <Image style={styles.statisticsIcons} source={require('../assets/weather-icons/icons8-wind-100.png')} />
-                            <Text style={styles.statisticsText}> {weatherForecastData.current.wind_kph} Km/h </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.viewDays}>
-                        <FlatList
-                            data={forecastDays}
-                            renderItem={renderItemDay}
-                            keyExtractor={(item) => item.id.toString()}
-                            contentContainerStyle={{ alignItems: 'center' }}
-                            horizontal />
-                    </View>
-
-                    <View style={styles.viewForcast}>
-                        <FlatList
-                            data={forecastHours}
-                            renderItem={renderForcast}
-                            keyExtractor={(item) => item.id.toString()}
-                            contentContainerStyle={{ alignItems: 'center' }}
-                            horizontal />
-                    </View> */}
-                </>
-                : <View><Text>NOTHING</Text></View>}
+                <View style={styles.viewForcast}>
+                    <FlatList
+                        data={forecastHours}
+                        renderItem={renderForcast}
+                        keyExtractor={(item) => item.id.toString()}
+                        contentContainerStyle={{ alignItems: 'center' }}
+                        horizontal />
+                </View> 
+              </> 
+              :
+               console.log('null') }
 
 
         </View>
@@ -195,21 +255,22 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       //alignItems: 'center',
-      justifyContent: 'center',
+      //justifyContent: 'center',
       backgroundColor: 'rgb(91, 225, 255)'
     },
     header: {
       //backgroundColor: 'blue',
       //alignItems: 'center',
-      justifyContent: 'center',
+      
       flexDirection: 'row',
       padding: 10
     },
     city: {
+      flex: 1,
       fontWeight: 'bold',
       fontSize: 30,
       color: 'rgb(32, 44, 88)',
-      marginRight: 50,
+      //marginRight: 50,
       //mrginLeft: 50
     },
     containerIcon: {
@@ -222,79 +283,90 @@ const styles = StyleSheet.create({
       height: 200,
     },
     description: {
-      alignItems: 'center',
+      //alignItems: 'center',
       //backgroundColor: 'red'
+      textAlign:'center'
     },
     descText: {
       color: 'rgb(54, 113, 155)',
       fontWeight: 'bold',
-      fontSize: 20
+      fontSize: 20,
+      alignSelf: 'stretch',
     },
     temperature: {
-      alignItems: 'center'
+      //alignItems: 'center'
+      textAlign:'center'
     },
     temp: {
       color: 'rgb(32, 44, 88)',
       fontWeight: 'bold',
-      fontSize: 90
+      fontSize: 90,
+      alignSelf: 'stretch',
     },
     statistics: {
       //backgroundColor: 'orange',
-      justifyContent: 'center',
+      // justifyContent: 'center',
       display: 'flex',
       flexDirection: 'row'
     },
-    statisticsChilds: {
-      alignItems: 'center',
+    statisticsChilds1: {
+      justifyContent:'flex-start',
+      flex: 1,
       display: 'flex',
       flexDirection: 'row',
       //backgroundColor: '#fdf',
-      marginRight: 30,
+      marginStart: 30,
     },
     statisticsChilds2: {
-      alignItems: 'center',
+      justifyContent:'flex-end',
+      flex: 1,
       display: 'flex',
       flexDirection: 'row',
-      marginLeft: 30
+      marginEnd: 30
     },
     statisticsIcons: {
-      width: 25,
-      height: 25,
-      marginRight: 15
+      width: 23,
+      height: 23,
+      marginRight: 15,
+      // marginStart:20
     },
     statisticsText: {
       color: 'rgb(54, 113, 155)',
       fontWeight: 'bold',
-      fontSize: 14
+      fontSize: 14,
     },
     viewDays: {
       // backgroundColor: 'green',
-      padding: 10,
-      width: 350,
+      paddingStart: 20,
+      paddingEnd: 20,
+      // width: 350,
       marginTop: 15,
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignContent: 'center'
+      // alignItems: 'center',
+      // justifyContent: 'center',
+      // alignContent: 'center'
     },
     containerDay: {
       // backgroundColor: 'purple',
-      marginRight: 20,
-      alignItems: 'center'
+      marginEnd: 20,
+      // alignItems: 'center'
     },
     day: {
       fontWeight: 'bold',
       fontSize: 12,
       color: 'rgb(32, 44, 88)',
-      alignItems: 'center'
+      //alignItems: 'center'
     },
     viewForcast: {
       // backgroundColor: 'red',
-      padding: 10,
-      width: 350,
+      paddingStart: 20,
+      paddingEnd: 20,
+      marginTop: 15,
+      //width: 350,
     },
     containerForcast: {
+      width: 90,
       backgroundColor: '#00000015',
-      marginRight: 20,
+      marginEnd: 20,
       alignItems: 'center',
       padding: 10,
       borderRadius: 10
