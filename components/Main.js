@@ -90,72 +90,10 @@ function Main(props) {
         }
         seatForecastDays(newArrayDays);
         seatForecastHours(newArrayHours);
-        console.log(newArrayHours);
+        //console.log(newArrayHours);
       }
     
-      // const getForecastDays = (day) => {
-      //   let newArrayDays = []; 
-      //   let newArrayHours = [];
-      //   let flatListArray = [];
-
-
-    
-        // for (let i = 0; i < weatherForecastData.forecast.forecastday.length; i++) {
-    
-        //   //Forecast Days
-        //   let str = parseInt(weatherForecastData.forecast.forecastday[i].date_epoch + '000');
-        //   let Day = days[new Date(str).getDay()];
-        //   let Month = months[new Date(str).getMonth()];
-        //   let fDate = new Date(str).getDate();
-        //   //let objDay = { "id": i, "day": Day+','+fDate+' '+Month};
-        //   let objDay = { "id": i, "day": Day, "date": fDate+' '+Month};
-    
-        //   newArrayDays.push(objDay);
-        //   seatForecastDays(newArrayDays);
-    
-    
-        //   //Forecast Hours
-        //   for (let j = 0; j < weatherForecastData.forecast.forecastday[i].hour.length; j++) {
-    
-        //     let day = days[new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getDay()];
-        //     //let hour = weatherForecastData.forecast.forecastday[i].hour[j].time.slice(11, 17);
-        //     let hour = new Date(parseInt(weatherForecastData.forecast.forecastday[i].hour[j].time_epoch + '000')).getHours();
-        //     let icon = weatherForecastData.forecast.forecastday[i].hour[j].condition.icon;
-        //     let temp = weatherForecastData.forecast.forecastday[i].hour[j].temp_c;
-            
-        //     let objHours = {};
-        //     //Check what a Day is !!!
-        //     if(day == days[new Date().getDay()]){ //==> If the day == Today
-        //       if(hour >= new Date().getHours()){  //==> If hour of the day >= the hour of Today
-        //         if(hour.toString().length > 1){
-        //           objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
-        //          }else{
-        //            objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
-        //          }
-        //       }
-        //     }else{
-        //       if(hour.toString().length > 1){
-        //         objHours = { 'id': j, 'day': day, 'hour': hour+':00', 'icon': icon, 'temp': temp };
-        //        }else{
-        //          objHours = { 'id': j, 'day': day, 'hour': '0'+hour+':00', 'icon': icon, 'temp': temp };
-        //        }
-        //     }
-        //     newArrayHours.push(objHours);
-        //   }
-    
-        // }
-    
-        // // Fetch in 
-        //   newArrayHours.forEach(element => {
-        //       if (element.day == day) {
-        //         flatListArray.push(element);
-        //       }
-        //     });
-        //   seatForecastHours(flatListArray);
-        
-    
-        
-      //}
+      
     
     
       useEffect(() => {
@@ -263,7 +201,10 @@ const styles = StyleSheet.create({
       //alignItems: 'center',
       
       flexDirection: 'row',
-      padding: 10
+      paddingTop: 10,
+      paddingBottom: 10,
+      paddingStart: 20,
+      paddingEnd: 20,
     },
     city: {
       flex: 1,
