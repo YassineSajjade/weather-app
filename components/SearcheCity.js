@@ -1,115 +1,115 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, StatusBar, TextInput, Image, Text, TouchableWithoutFeedback, FlatList } from 'react-native';
 import AutocompleteInput from 'react-native-autocomplete-input';
 
 function SearcheCity() {
 
-    const [childData, setChildData] = useState(false);
-    const [cities, setCities] = useState([]);
-    const [citiesFiltered, setCitiesFiltered] = useState([]);
-    const [cityName, setCityName] = useState('');
-    const [showList, setshowList] = useState('none');
-    const [dataOfCity, setdataOfCity] = useState();
-    const [uv, setUV] = useState('');
+  // const [childData, setChildData] = useState(false);
+  // const [cities, setCities] = useState([]);
+  // const [citiesFiltered, setCitiesFiltered] = useState([]);
+  // const [cityName, setCityName] = useState('');
+  // const [showList, setshowList] = useState('none');
+  // const [dataOfCity, setdataOfCity] = useState();
+  // const [uv, setUV] = useState('');
 
-    const [sunRise, setSunRise] = useState();
-    const [sunSet, setSunSet] = useState();
+  // const [sunRise, setSunRise] = useState();
+  // const [sunSet, setSunSet] = useState();
 
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
-    
-    const getCities = () => {
-        fetch('https://raw.githubusercontent.com/russ666/all-countries-and-cities-json/6ee538beca8914133259b401ba47a550313e8984/countries.min.json')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            
-            const citiesArray = Object.values(responseJson);
-            const arr = [];
-             for(let i=0; i<citiesArray.length; i++){
-                 for(let j=0; j<citiesArray[i].length; j++){
-                    //console.log(citiesArray[i][j]);
-                    arr.push(citiesArray[i][j]);
-                 }
-                //arr.push(citiesArray[i]);
-                
-            }
-            //setCitiesFiltered(arr);
-            setCities(arr);
-          //console.log(arr);
-          })
-          .catch((error) => {
-            console.log('getCities ERROR: ' + error);
-          });
-      }
+  // const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    const searcheCity = (text) => {
-      setCityName(text);
-      if(cityName != null){
-        setshowList('block');
-        const cityUppper = text.toUpperCase();
-      
-        const newCity = cities.filter( city => {
-          const cityListUpper = city.toUpperCase();
-          return cityListUpper.match(cityUppper) 
-        })
-      setCitiesFiltered(newCity);
-      }
-      
-     }
 
-    const handleSearch = () =>{
-      if(cityName.length > 0){
+  // const getCities = () => {
+  //     fetch('https://raw.githubusercontent.com/russ666/all-countries-and-cities-json/6ee538beca8914133259b401ba47a550313e8984/countries.min.json')
+  //       .then((response) => response.json())
+  //       .then((responseJson) => {
 
-        fetch('https://api.weatherapi.com/v1/current.json?key=ad4b8f61a78d45a598293412210308&q='+cityName+'&aqi=no')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          setUV(responseJson.current.uv);
-        })
-        .catch((error) => {
-          console.error('UV ERROR: ' + error);
-        });
+  //         const citiesArray = Object.values(responseJson);
+  //         const arr = [];
+  //          for(let i=0; i<citiesArray.length; i++){
+  //              for(let j=0; j<citiesArray[i].length; j++){
+  //                 //console.log(citiesArray[i][j]);
+  //                 arr.push(citiesArray[i][j]);
+  //              }
+  //             //arr.push(citiesArray[i]);
 
-        fetch('https://api.openweathermap.org/data/2.5/forecast?q='+cityName+'&appid=243b73dbf2837d9b3bfb97b87b1879dd&units=metric')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            setdataOfCity(responseJson);
-            setChildData(true);
-            setCityName('');
-            let sunset = new Date(parseInt(responseJson.city.sunset+'000')).getUTCHours();
-            let sunrise = new Date(parseInt(responseJson.city.sunrise+'000')).getUTCHours();
-            if( sunset < 10){
-              setSunSet('0'+sunset);
-            }else{
-              setSunSet(sunset);
-            }
+  //         }
+  //         //setCitiesFiltered(arr);
+  //         setCities(arr);
+  //       //console.log(arr);
+  //       })
+  //       .catch((error) => {
+  //         console.log('getCities ERROR: ' + error);
+  //       });
+  //   }
 
-            if( sunrise < 10){
-              setSunRise('0'+sunrise);
-            }else{
-              setSunRise(sunrise);
-            }
+  // const searcheCity = (text) => {
+  //   setCityName(text);
+  //   if(cityName != null){
+  //     setshowList('block');
+  //     const cityUppper = text.toUpperCase();
 
-          })
-          .catch((error) => {
-            console.log('SearchCity ERROR: ' + error);
-          });
-      }else{
-        alert('Enter city name first..');
-      }
-        
-      
-    }
-   
+  //     const newCity = cities.filter( city => {
+  //       const cityListUpper = city.toUpperCase();
+  //       return cityListUpper.match(cityUppper) 
+  //     })
+  //   setCitiesFiltered(newCity);
+  //   }
 
-    useEffect(() => {
-      getCities();
-      
-    },[])
+  //  }
 
-    return (
-            <>
-            {!childData
+  // const handleSearch = () =>{
+  //   if(cityName.length > 0){
+
+  //     fetch('https://api.weatherapi.com/v1/current.json?key=ad4b8f61a78d45a598293412210308&q='+cityName+'&aqi=no')
+  //     .then((response) => response.json())
+  //     .then((responseJson) => {
+  //       setUV(responseJson.current.uv);
+  //     })
+  //     .catch((error) => {
+  //       console.error('UV ERROR: ' + error);
+  //     });
+
+  //     fetch('https://api.openweathermap.org/data/2.5/forecast?q='+cityName+'&appid=243b73dbf2837d9b3bfb97b87b1879dd&units=metric')
+  //       .then((response) => response.json())
+  //       .then((responseJson) => {
+  //         setdataOfCity(responseJson);
+  //         setChildData(true);
+  //         setCityName('');
+  //         let sunset = new Date(parseInt(responseJson.city.sunset+'000')).getUTCHours();
+  //         let sunrise = new Date(parseInt(responseJson.city.sunrise+'000')).getUTCHours();
+  //         if( sunset < 10){
+  //           setSunSet('0'+sunset);
+  //         }else{
+  //           setSunSet(sunset);
+  //         }
+
+  //         if( sunrise < 10){
+  //           setSunRise('0'+sunrise);
+  //         }else{
+  //           setSunRise(sunrise);
+  //         }
+
+  //       })
+  //       .catch((error) => {
+  //         console.log('SearchCity ERROR: ' + error);
+  //       });
+  //   }else{
+  //     alert('Enter city name first..');
+  //   }
+
+
+  // }
+
+
+  // useEffect(() => {
+  //   getCities();
+
+  // },[])
+
+  return (
+    <>
+      {/* {!childData
                 ? 
                     <View style={styles.container}>
                       <StatusBar />
@@ -216,47 +216,126 @@ function SearcheCity() {
                             </View>
                         </View>
                     </View>
-                </View>}
+                </View>} */}
+      <View style={styles.container}>
+        <StatusBar />
+
+        <View style={styles.searchBar} >
+          <TextInput style={styles.textInput}
+            placeholder='City name' />
+          <TouchableWithoutFeedback >
+            <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
+          </TouchableWithoutFeedback>
+        </View>
+
+        <View style={{ alignItems: 'center', marginTop: 10 }}>
+          <Text style={{ fontSize: 20, color: '#202c58', fontWeight: 'bold' }}> Rabat, MA </Text>
+          <Text style={{ fontSize: 15, color: '#202c58bf', fontWeight: '700' }}>15 Sep, We</Text>
+        </View>
+
+        <View style={{ marginTop: 25 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 70, color: '#202c58', flex: 1, textAlignVertical: 'center', textAlign: 'center' }}>20°</Text>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Image style={{ width: 95, height: 95 }} source={{ uri: 'https://openweathermap.org/img/wn/10d@4x.png' }} />
+            </View>
+          </View>
+
+          <View style={{ flexDirection: 'row' }} >
+            <Text style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', color: '#202c58' }}> Cloudy </Text>
+            <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#202c58bf' }}> 20° / 18°</Text>
+            <Text style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', color: '#202c58bf' }}> Feels like 19°</Text>
+          </View>
+        </View>
+
+        <View style={{marginTop: 40, flexDirection: 'row'}}>
+
+          <View style={{flex : 1, alignItems: 'flex-start'}}>
+            <View style={{flexDirection: 'row', marginBottom: 20}}>
+              <Image style={styles.imgs}  source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
+              <Text style={styles.texts}>06:00</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wet-100.png')} />
+              <Text style={styles.texts}>83 %</Text>
+            </View>
+          </View>
+
+          <View style={{flex : 1, alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', marginBottom: 20}}>
+              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
+              <Text style={styles.texts}>19:30 </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Image style={styles.imgs}  source={require('../assets/weather-icons/ultraviolet.png')} />
+              <Text style={styles.texts}> 3 UV </Text>
+            </View>
+          </View>
+
+          <View style={{flex : 1, alignItems: 'flex-end'}}>
+            <View style={{flexDirection: 'row', marginBottom: 20}}>
+              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wind-100.png')} />
+              <Text style={styles.texts}>  17 Km/h </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Image style={styles.imgs}  source={require('../assets/weather-icons/icons8-pressure.png')} />
+              <Text style={styles.texts}> 1036 hPa </Text>
+            </View>
+          </View>
+
+        </View>
+
+      </View>
 
 
 
-
-        </>
-    )
+    </>
+  )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        //alignItems: 'center',
-        //justifyContent: 'flex-start',
-        backgroundColor: 'rgb(91, 225, 255)'
-    },
-    searchBar: {
-        flexDirection: 'row',
-        paddingTop: 10,
-        paddingBottom: 5,
-        paddingStart: 20,
-        paddingEnd: 20,
-    },
-    textInput: {
-        flex: 1,
-        height: 35,
-        padding: 5,
-        backgroundColor: '#fdfdfd',
-        marginRight: 5
-    },
-    searchIcon: {
-        width: 35,
-        height: 35,
-        padding: 5
-    },
-    flatListCities: {
-      width: '280px',
-      height: '120px',
-      backgroundColor: '#fdfdfd',
-      marginStart: 20
-    }
+  container: {
+    flex: 1,
+    //alignItems: 'center',
+    //justifyContent: 'flex-start',
+    backgroundColor: 'rgb(91, 225, 255)',
+    paddingStart: 20,
+    paddingEnd: 20,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 5,
+
+  },
+  textInput: {
+    flex: 1,
+    height: 35,
+    padding: 5,
+    backgroundColor: '#fdfdfd',
+    marginRight: 5
+  },
+  searchIcon: {
+    width: 35,
+    height: 35,
+    padding: 5
+  },
+  flatListCities: {
+    width: '280px',
+    height: '120px',
+    backgroundColor: '#fdfdfd',
+    marginStart: 20
+  },
+  imgs :{
+    height: 20,
+    width: 22,
+    marginRight: 7
+  },
+  texts :{
+    color: '#202c58',
+    fontWeight: 'bold',
+    //marginLeft: '5px'
+  }
 });
 
 export default SearcheCity
@@ -309,7 +388,7 @@ export default SearcheCity
 //                      arr.push(citiesArray[i][j]);
 //                   }
 // //                 //arr.push(citiesArray[i]);
-                
+
 //              }
 //         setFilms(arr);
 //         //setting the data in the films state
