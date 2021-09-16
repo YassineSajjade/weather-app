@@ -11,8 +11,8 @@ function SearcheCity() {
   const [dataOfCity, setdataOfCity] = useState();
 
   const [uv, setUV] = useState('');
-  const [sunRise, setSunRise] = useState();
-  const [sunSet, setSunSet] = useState();
+  const [sunRise, setSunRise] = useState('');
+  const [sunSet, setSunSet] = useState('');
 
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -35,7 +35,7 @@ function SearcheCity() {
         }
         //setCitiesFiltered(arr);
         setCities(arr);
-        console.log(arr);
+        //console.log(arr);
       })
       .catch((error) => {
         console.log('getCities ERROR: ' + error);
@@ -64,6 +64,7 @@ function SearcheCity() {
         .then((response) => response.json())
         .then((responseJson) => {
           setUV(responseJson.current.uv);
+          //console.log(uv);
         })
         .catch((error) => {
           console.error('UV ERROR: ' + error);
@@ -72,21 +73,25 @@ function SearcheCity() {
       fetch('https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=243b73dbf2837d9b3bfb97b87b1879dd&units=metric')
         .then((response) => response.json())
         .then((responseJson) => {
+          //console.log(responseJson);
           setdataOfCity(responseJson);
           setChildData(true);
           setCityName('');
           let sunset = new Date(parseInt(responseJson.city.sunset + '000')).getUTCHours();
+          let sunsetMin = new Date(parseInt(responseJson.city.sunset + '000')).getUTCMinutes();
           let sunrise = new Date(parseInt(responseJson.city.sunrise + '000')).getUTCHours();
+          let sunriseMin = new Date(parseInt(responseJson.city.sunrise + '000')).getUTCMinutes();
+          console.log(sunsetMin+' / '+sunriseMin);
           if (sunset < 10) {
-            setSunSet('0' + sunset);
+            setSunSet('0'+sunset+':'+sunsetMin);
           } else {
-            setSunSet(sunset);
+            setSunSet(sunset+':'+sunsetMin);
           }
 
           if (sunrise < 10) {
-            setSunRise('0' + sunrise);
-          } else {
-            setSunRise(sunrise);
+            setSunRise('0'+sunrise+':'+sunriseMin);
+          } else { 
+            setSunRise(sunrise+':'+sunriseMin);
           }
 
         })
@@ -108,200 +113,129 @@ function SearcheCity() {
 
   return (
     <>
-      {/* {!childData
-                ? 
-                    <View style={styles.container}>
-                      <StatusBar />
-                      <View style={styles.searchBar} >
-                          <TextInput style={styles.textInput} 
-                            placeholder='City name' 
-                            onChangeText={(text) =>searcheCity(text)} 
-                            value={cityName}/>
-                          <TouchableWithoutFeedback onPress={handleSearch} >
-                              <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
-                          </TouchableWithoutFeedback>
-                      </View>
-                      <View style={{display: showList}}>
-                        <FlatList
-                          style={styles.flatListCities}
-                          data={citiesFiltered}
-                          renderItem={({item}) => 
-                            <TouchableWithoutFeedback onPress={ () => {
-                              setCityName(item);
-                              setshowList('none');
-                              }}>
-                              <Text style={{padding: '5px', borderBottomWidth: 1, borderBottomColor: "#d0d0d0"}}>{item}</Text>
-                            </TouchableWithoutFeedback>}
-                          keyExtractor={(item,index) => index.toString()}/>
-                      </View>
-                    </View>
-                :
-                    <View style={styles.container}>
-                    <StatusBar />
+      {!childData
+        ?
+        <View style={styles.container}>
+          <StatusBar />
 
-                    <View style={styles.searchBar} >
-                          <TextInput style={styles.textInput} 
-                            placeholder='City name' 
-                            onChangeText={(text) =>searcheCity(text)} 
-                            value={cityName}/>
-                          <TouchableWithoutFeedback onPress={handleSearch} >
-                              <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
-                          </TouchableWithoutFeedback>
-                      </View>
-                      <View style={{display: showList}}>
-                        <FlatList
-                          style={styles.flatListCities}
-                          data={citiesFiltered}
-                          renderItem={({item}) => 
-                            <TouchableWithoutFeedback onPress={ () => {
-                              setCityName(item);
-                              setshowList('none');
-                              }}>
-                              <Text style={{padding: '5px', borderBottomWidth: 1, borderBottomColor: "#d0d0d0"}}>{item}</Text>
-                            </TouchableWithoutFeedback>}
-                          keyExtractor={(item,index) => index.toString()}/>
-                      </View>
-                    
-                    <View style={{ alignItems: 'center', marginTop: 10 }}>
-                        <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#202c58' }}> { dataOfCity.city.name }, { dataOfCity.city.country } </Text>
-                        <Text style={{ fontSize: '15px', fontWeight: '700', color: '#202c58bf' }}>
-                          { days[new Date( parseInt(dataOfCity.list[0].dt+'000') ).getDay()]}, { new Date( parseInt(dataOfCity.list[0].dt+'000') ).getDate()} { months[new Date( parseInt(dataOfCity.list[0].dt+'000') ).getMonth()] }
-                          </Text>
-                    </View>
+          <View style={styles.searchBar} >
+            <TextInput style={styles.textInput}
+              placeholder='City name'
+              onChangeText={(text) => searcheCity(text)}
+              value={cityName} />
+            <TouchableWithoutFeedback onPress={handleSearch}>
+              <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
+            </TouchableWithoutFeedback>
+          </View>
 
-                    <View style={{ marginTop: 25 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: '70px', color: '#202c58', flex: 1, textAlign: 'center' }}>{ dataOfCity.list[0].main.temp.toFixed(0) }°</Text>
-                            <View style={{ flex: 1, alignItems: 'center' }}>
-                              <Image style={{ width: '95px', height: '95px' }} source={{ uri: 'https://openweathermap.org/img/wn/'+dataOfCity.list[0].weather[0].icon+'@4x.png' }} />
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}>
-                            <Text style={{ fontWeight: 'bold', color: '#202c58', flex: 1, textAlign: 'center' }}> { dataOfCity.list[0].weather[0].description } </Text>
-                            <Text style={{ fontWeight: 'bold', color: '#202c58bf', flex: 1, textAlign: 'center' }}> {dataOfCity.list[0].main.temp_max.toFixed(0)}°  / {dataOfCity.list[0].main.temp_min.toFixed(0)}°</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#202c58bf', flex: 1, textAlign: 'center' }}> Feels like {dataOfCity.list[0].main.feels_like.toFixed(0)}°</Text>
-                        </View>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                        <View  style={{ flex: 1, marginStart: 20 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: '20px' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}>{sunRise}:00</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-wet-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.list[0].main.humidity} %</Text>
-                            </View>
-                        </View>
-                        <View  style={{ flex: 1 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: '20px', alignSelf: 'center' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {sunSet}:00 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/ultraviolet.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {uv} UV </Text>
-                            </View>
-                        </View>
-                        <View style={{ flex: 1, marginEnd: 20 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: '20px', alignSelf: 'flex-end' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-wind-100.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {(dataOfCity.list[0].wind.speed * 3.6).toFixed(0)} Km/h </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
-                                <Image style={{ height: '20px', width: '22px' }} source={require('../assets/weather-icons/icons8-pressure.png')} />
-                                <Text style={{ marginLeft: '5px', fontWeight: 'bold', color: '#202c58' }}> {dataOfCity.list[0].main.pressure} hPa </Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>} */}
-      <View style={styles.container}>
-        <StatusBar />
-
-        <View style={styles.searchBar} >
-          <TextInput style={styles.textInput}
-            placeholder='City name'
-            onChangeText={(text) => searcheCity(text)}
-            value={cityName} />
-          <TouchableWithoutFeedback onPress={handleSearch}>
-            <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
-          </TouchableWithoutFeedback>
-        </View>
-
-        {/* FlatList for showing list of cities */}
-        <View style={{ display: showList }}>
-          <FlatList
-            style={styles.flatListCities}
-            data={citiesFiltered}
-            renderItem={({ item }) =>
-              <TouchableWithoutFeedback onPress={ () => {
-                setCityName(item);
-                setshowList('none');
+          {/* FlatList for showing list of cities */}
+          <View style={{ display: showList }}>
+            <FlatList
+              style={styles.flatListCities}
+              data={citiesFiltered}
+              renderItem={({ item }) =>
+                <TouchableWithoutFeedback onPress={() => {
+                  setCityName(item);
+                  setshowList('none');
                 }}>
-                <Text style={{padding: 5, borderBottomWidth: 1, borderBottomColor: "#d0d0d0"}}>{item}</Text>
-              </TouchableWithoutFeedback>}
-            keyExtractor={(item, index) => index.toString()} />
+                  <Text style={{ padding: 5, borderBottomWidth: 1, borderBottomColor: "#d0d0d0" }}>{item}</Text>
+                </TouchableWithoutFeedback>}
+              keyExtractor={(item, index) => index.toString()} />
+          </View>
         </View>
+        :
+        <View style={styles.container}>
+          <StatusBar />
 
-        <View style={{ alignItems: 'center', marginTop: 10 }}>
-          <Text style={{ fontSize: 20, color: '#202c58', fontWeight: 'bold' }}> Rabat, MA </Text>
-          <Text style={{ fontSize: 15, color: '#202c58bf', fontWeight: '700' }}>15 Sep, We</Text>
-        </View>
+          <View style={styles.searchBar} >
+            <TextInput style={styles.textInput}
+              placeholder='City name'
+              onChangeText={(text) => searcheCity(text)}
+              value={cityName} />
+            <TouchableWithoutFeedback onPress={handleSearch}>
+              <Image style={styles.searchIcon} source={require('../assets/icons8-search-50.png')} />
+            </TouchableWithoutFeedback>
+          </View>
 
-        <View style={{ marginTop: 25 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 70, color: '#202c58', flex: 1, textAlignVertical: 'center', textAlign: 'center' }}>20°</Text>
+          {/* FlatList for showing list of cities */}
+          <View style={{ display: showList }}>
+            <FlatList
+              style={styles.flatListCities}
+              data={citiesFiltered}
+              renderItem={({ item }) =>
+                <TouchableWithoutFeedback onPress={() => {
+                  setCityName(item);
+                  setshowList('none');
+                }}>
+                  <Text style={{ padding: 5, borderBottomWidth: 1, borderBottomColor: "#d0d0d0" }}>{item}</Text>
+                </TouchableWithoutFeedback>}
+              keyExtractor={(item, index) => index.toString()} />
+          </View>
+
+          <View style={{ alignItems: 'center', marginTop: 10 }}>
+            <Text style={{ fontSize: 20, color: '#202c58', fontWeight: 'bold' }}> { dataOfCity.city.name }, { dataOfCity.city.country } </Text>
+            <Text style={{ fontSize: 15, color: '#202c58bf', fontWeight: '700' }}>
+            { days[new Date( parseInt(dataOfCity.list[0].dt+'000') ).getDay()]}, { new Date( parseInt(dataOfCity.list[0].dt+'000') ).getDate()} { months[new Date( parseInt(dataOfCity.list[0].dt+'000') ).getMonth()] }
+            </Text>
+          </View>
+
+          <View style={{ marginTop: 25 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontWeight: 'bold', fontSize: 70, color: '#202c58', flex: 1, textAlignVertical: 'center', textAlign: 'center' }}>{ dataOfCity.list[0].main.temp.toFixed(0) }°</Text>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Image style={{ width: 95, height: 95 }} source={{ uri: 'https://openweathermap.org/img/wn/'+dataOfCity.list[0].weather[0].icon+'@4x.png' }} />
+              </View>
+            </View>
+
+            <View style={{ flexDirection: 'row' }} >
+              <Text style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', color: '#202c58' }}> { dataOfCity.list[0].weather[0].description }  </Text>
+              <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#202c58bf' }}> {dataOfCity.list[0].main.temp_max.toFixed(0)}° / {dataOfCity.list[0].main.temp_min.toFixed(0)}°</Text>
+              <Text style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', color: '#202c58bf' }}> Feels like {dataOfCity.list[0].main.feels_like.toFixed(0)}°</Text>
+            </View>
+          </View>
+          
+
+
+          <View style={{ marginTop: 40, flexDirection: 'row' }}>
+
+            <View style={{ flex: 1, alignItems: 'flex-start' }}>
+              <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
+                <Text style={styles.texts}>{sunRise}</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wet-100.png')} />
+                <Text style={styles.texts}>{dataOfCity.list[0].main.humidity} %</Text>
+              </View>
+            </View>
+
             <View style={{ flex: 1, alignItems: 'center' }}>
-              <Image style={{ width: 95, height: 95 }} source={{ uri: 'https://openweathermap.org/img/wn/10d@4x.png' }} />
+              <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
+                <Text style={styles.texts}>{sunSet}</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/ultraviolet.png')} />
+                <Text style={styles.texts}> {uv} UV </Text>
+              </View>
             </View>
-          </View>
 
-          <View style={{ flexDirection: 'row' }} >
-            <Text style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', color: '#202c58' }}> Cloudy </Text>
-            <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#202c58bf' }}> 20° / 18°</Text>
-            <Text style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', color: '#202c58bf' }}> Feels like 19°</Text>
-          </View>
-        </View>
+            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+              <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wind-100.png')} />
+                <Text style={styles.texts}>{(dataOfCity.list[0].wind.speed * 3.6).toFixed(0)} Km/h</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-pressure.png')} />
+                <Text style={styles.texts}>{dataOfCity.list[0].main.pressure} hPa </Text>
+              </View>
+            </View>
 
-        <View style={{ marginTop: 40, flexDirection: 'row' }}>
-
-          <View style={{ flex: 1, alignItems: 'flex-start' }}>
-            <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
-              <Text style={styles.texts}>06:00</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wet-100.png')} />
-              <Text style={styles.texts}>83 %</Text>
-            </View>
-          </View>
-
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
-              <Text style={styles.texts}>19:30 </Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/ultraviolet.png')} />
-              <Text style={styles.texts}> 3 UV </Text>
-            </View>
-          </View>
-
-          <View style={{ flex: 1, alignItems: 'flex-end' }}>
-            <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wind-100.png')} />
-              <Text style={styles.texts}>  17 Km/h </Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-pressure.png')} />
-              <Text style={styles.texts}> 1036 hPa </Text>
-            </View>
           </View>
 
         </View>
+      }
 
-      </View>
 
 
 
