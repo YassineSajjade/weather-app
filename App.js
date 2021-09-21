@@ -1,4 +1,6 @@
 import React, { useState, createContext} from 'react';
+//import { NavigationContainer } from '@react-navigation/native';
+//import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeRouter as Router, Switch, Route, Link } from "react-router-native";
 
 
@@ -6,6 +8,8 @@ import Main from './components/Main';
 import SearcheCity from './components/SearcheCity';
 
 //export const DataContext = createContext();
+
+//const Stack = createNativeStackNavigator();
 
 export default function App() {
 
@@ -44,6 +48,12 @@ export default function App() {
         </Switch>
       </>
     </Router>
+    // <NavigationContainer>
+    //   <Stack.Navigator>
+    //     <Stack.Screen name='main' component={Main} />
+    //     <Stack.Screen name='search' component={SearcheCity} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
 
   );
 }

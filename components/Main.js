@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, StatusBar, TouchableWithoutFeedback } from 'react-native';
 //import { DataContext } from '../App';
 
-function Main({ history }) {
+function Main(props) {
 
   //get context data
   //const value = useContext(DataContext);
@@ -126,7 +126,7 @@ function Main({ history }) {
           <>
             <View style={styles.header} >
               <Text style={styles.city}>{weatherForecastData.city.name}, {weatherForecastData.city.country}</Text>
-              <TouchableWithoutFeedback onPress={() => history.push('/search') }>
+              <TouchableWithoutFeedback onPress={() => props.history.push('/search') }>
                 <View>
                   <Image
                   style={styles.tinyLogo}

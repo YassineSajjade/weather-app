@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, StatusBar, TextInput, Image, Text, TouchableWithoutFeedback, FlatList } from 'react-native';
+import { StyleSheet, View, StatusBar, TextInput, Image, Text, TouchableWithoutFeedback, FlatList, BackHandler } from 'react-native';
 
-function SearcheCity() {
+
+function SearcheCity(props) {
 
   const [childData, setChildData] = useState(false);
   const [cities, setCities] = useState([]);
@@ -102,14 +103,31 @@ function SearcheCity() {
       alert('Enter city name first..');
     }
 
-
+    //props.history.push('/');
+  
   }
 
+  const backAction = () => {
+    props.history.push('/');
+    return true;
+  }
+  
 
   useEffect(() => {
     getCities();
+    //BackHandler.addEventListener("hardwareBackPress",backAction);
+  }, []);
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => {
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+    }
   }, [])
+
+
+  
+
 
   return (
     <>
