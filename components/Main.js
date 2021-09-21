@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, StatusBar, TouchableWithoutFeedback } from 'react-native';
-//import { DataContext } from '../App';
+import * as Progress from 'react-native-progress';
 
 function Main(props) {
 
@@ -177,11 +177,13 @@ function Main(props) {
                 horizontal />
             </View>
 
+            
+
           </>
           :
-          <>
-            <Text>Data had not load!!!</Text>
-          </>
+          <View style={{ flex: 1, alignItems:'center', justifyContent: 'center' }}>
+              <Progress.Circle size={100} indeterminate={true} borderWidth={5} />
+          </View>
       }
 
 

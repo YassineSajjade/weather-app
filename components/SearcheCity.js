@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, StatusBar, TextInput, Image, Text, TouchableWithoutFeedback, FlatList, BackHandler } from 'react-native';
-
+import * as Progress from 'react-native-progress';
 
 function SearcheCity(props) {
 
@@ -103,20 +103,16 @@ function SearcheCity(props) {
       alert('Enter city name first..');
     }
 
-    //props.history.push('/');
-  
   }
+
+  useEffect(() => {
+    getCities();
+  }, []);
 
   const backAction = () => {
     props.history.push('/');
     return true;
   }
-  
-
-  useEffect(() => {
-    getCities();
-    //BackHandler.addEventListener("hardwareBackPress",backAction);
-  }, []);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -219,7 +215,7 @@ function SearcheCity(props) {
             <View style={{ flex: 1, alignItems: 'flex-start' }}>
               <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                 <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunrise-100.png')} />
-                <Text style={styles.texts}>{sunRise}</Text>
+                <Text style={styles.texts}>{sunRise + ''}</Text>
               </View>
               <View style={{ flexDirection: 'row' }}>
                 <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-wet-100.png')} />
@@ -230,7 +226,7 @@ function SearcheCity(props) {
             <View style={{ flex: 1, alignItems: 'center' }}>
               <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                 <Image style={styles.imgs} source={require('../assets/weather-icons/icons8-sunset-100.png')} />
-                <Text style={styles.texts}>{sunSet}</Text>
+                <Text style={styles.texts}>{sunSet + ''}</Text>
               </View>
               <View style={{ flexDirection: 'row' }}>
                 <Image style={styles.imgs} source={require('../assets/weather-icons/ultraviolet.png')} />
@@ -250,6 +246,8 @@ function SearcheCity(props) {
             </View>
 
           </View>
+
+          
 
         </View>
       }
