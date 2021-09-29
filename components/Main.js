@@ -10,11 +10,13 @@ function Main(props) {
   const [weatherForecastData, seatWeatherForecastData] = useState();
   const [forecastDays, seatForecastDays] = useState([]);
   const [forecastHours, seatForecastHours] = useState([]);
-  //const [fragment, setFragment] = useState(value.page);
-
+  const [mainIcon, setMainIcon] = useState('');
+  
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+  // const teste = '03d';  
+  // const teste2 = require('../assets/weather-icons/'+mainIcon+'.png');  
 
   const getWeatherForecast = (dayClicked) => {
 
@@ -22,8 +24,11 @@ function Main(props) {
       .then((response) => response.json())
       .then((responseJson) => {
         seatWeatherForecastData(responseJson);
-        //console.log(responseJson);
         getForecastDays(responseJson, dayClicked);
+        
+        //teste = '03d';
+        setMainIcon(responseJson.list[0].weather[0].icon);
+        console.log(responseJson.list[0].weather[0].icon);
       })
       .catch((error) => {
         console.log('openweathermap ERROR: ' + error);
@@ -104,17 +109,64 @@ function Main(props) {
     <ItemDay day={item.day} date={item.date} />
   );
 
-  const ItemForcast = ({ hour, icon, temp }) => (
-    <View style={styles.containerForcast}>
-      <Text style={styles.forcastHour} >{hour}</Text>
-      <Image style={styles.forcastIcon} source={{ uri: 'https://openweathermap.org/img/wn/'+icon+'@2x.png' }} />
-      <Text style={styles.forcastTemp} >{temp.toFixed(0)}°</Text>
-    </View>
-  );
+  const ItemForcast = ({ hour, icon, temp }) =>{
+    let test;
+    
+    return (
+      <View style={styles.containerForcast}>
+        <Text style={styles.forcastHour} >{hour}</Text>
+        <Image style={styles.forcastIcon} source={renderSwitch(icon)} />
+        <Text style={styles.forcastTemp} >{temp.toFixed(0)}°</Text>
+      </View>
+    );
+  } 
 
   const renderForcast = ({ item }) => (
     <ItemForcast hour={item.hour} icon={item.icon} temp={item.temp} />
   );
+
+  const renderSwitch = (varIcon) =>{
+    switch(varIcon) {
+      case '01d':
+        return require('../assets/weather-icons/01d.png');
+      case '02d':
+        return require('../assets/weather-icons/02d.png');
+      case '03d':
+        return require('../assets/weather-icons/03d.png');
+      case '04d':
+        return require('../assets/weather-icons/04d.png');
+      case '09d':
+        return require('../assets/weather-icons/09d.png');
+      case '10d':
+        return require('../assets/weather-icons/10d.png');
+      case '11d':
+        return require('../assets/weather-icons/11d.png');
+      case '13d':
+        return require('../assets/weather-icons/13d.png');
+      case '50d':
+        return require('../assets/weather-icons/50d.png');
+      case '01n':
+        return require('../assets/weather-icons/01n.png');
+      case '02n':
+        return require('../assets/weather-icons/02n.png');
+      case '03n':
+        return require('../assets/weather-icons/03n.png');
+      case '04n':
+        return require('../assets/weather-icons/04n.png');
+      case '09n':
+        return require('../assets/weather-icons/09n.png');
+      case '10n':
+        return require('../assets/weather-icons/10n.png');
+      case '11n':
+        return require('../assets/weather-icons/11n.png');
+      case '13n':
+        return require('../assets/weather-icons/13n.png');
+      case '50n':
+        return require('../assets/weather-icons/50n.png');
+      default:
+        return require('../assets/weather-icons/116.png');
+    }
+  }
 
 
   return (
@@ -122,8 +174,8 @@ function Main(props) {
       <StatusBar />
       {
         weatherForecastData
-          ?
-          <>
+        ?
+        <>
             <View style={styles.header} >
               <Text style={styles.city}>{weatherForecastData.city.name}, {weatherForecastData.city.country}</Text>
               <TouchableWithoutFeedback onPress={() => props.history.push('/search') }>
@@ -134,10 +186,11 @@ function Main(props) {
                 </View>
               </TouchableWithoutFeedback>
             </View>
-
+            
             <View style={styles.containerIcon}>
               <Image style={styles.icon}
-                source={{ uri: 'https://openweathermap.org/img/wn/' + weatherForecastData.list[0].weather[0].icon + '@4x.png' }} />
+                source={ renderSwitch(mainIcon) }/>
+                
             </View>
 
             <View style={styles.description}>
