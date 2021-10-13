@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, StatusBar, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, StatusBar, TouchableWithoutFeedback, ToastAndroid } from 'react-native';
 import * as Progress from 'react-native-progress';
 
 function Main(props) {
@@ -15,9 +15,8 @@ function Main(props) {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // const teste = '03d';  
-  // const teste2 = require('../assets/weather-icons/'+mainIcon+'.png');  
-
+ 
+  // ***** get WeatherForeCast from API ***** 
   const getWeatherForecast = (dayClicked) => {
 
     fetch('https://api.openweathermap.org/data/2.5/forecast?q=casablanca&appid=243b73dbf2837d9b3bfb97b87b1879dd&units=metric')
@@ -84,9 +83,10 @@ function Main(props) {
     //console.log(newArrayHours);
   }
 
-  // const handlePress = () => {
-  //   value.toggleFragments;
-  // }
+  // ***** Function to show a Toast *****
+  const showToast = (msg) => {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  };
 
 
 
@@ -98,9 +98,9 @@ function Main(props) {
 
 
   const ItemDay = ({ day, date }) => (
-    <TouchableWithoutFeedback onPress={() => getWeatherForecast(day)}>
+    <TouchableWithoutFeedback onPress={() => {getWeatherForecast(day);showToast(day)}} >
       <View style={styles.containerDay}>
-        <Text style={styles.day}>{day}, {date}</Text>
+        <Text style={styles.day} >{day}, {date}</Text>
       </View>
     </TouchableWithoutFeedback>
   );
